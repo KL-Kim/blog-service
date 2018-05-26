@@ -1,0 +1,51 @@
+{
+  "name": "blog-service",
+  "version": "0.0.1",
+  "description": "Blog service",
+  "main": "server.js",
+  "scripts": {
+    "test": "cross-env NODE_ENV=test mocha --require babel-core/register tests/**/*.test.js",
+    "start": "clear && babel-node server.js",
+    "debug": "clear && babel-node --inspect=0.0.0.0:9229 server.js",
+    "init-categories": "clear && babel-node tests/init.categories.js"
+  },
+  "repository": "https://github.com/KL-Kim/blog-service.git",
+  "author": "KL-Kim <jinguanglong11@hotmail.com>",
+  "license": "MIT",
+  "private": false,
+  "dependencies": {
+    "accesscontrol": "^2.2.1",
+    "auto-bind": "^1.2.0",
+    "bluebird": "^3.5.1",
+    "compression": "^1.7.2",
+    "cookie-parser": "^1.4.3",
+    "cors": "^2.8.4",
+    "dotenv": "^5.0.1",
+    "express": "^4.16.3",
+    "express-validation": "^1.0.2",
+    "grpc": "^1.12.2",
+    "helmet": "^3.12.1",
+    "http-status": "^1.1.2",
+    "joi": "^13.3.0",
+    "lodash": "^4.17.10",
+    "method-override": "^2.3.10",
+    "mongoose": "^5.1.2",
+    "morgan": "^1.9.0",
+    "node-cron": "^1.2.1",
+    "passport": "^0.4.0",
+    "passport-jwt": "^4.0.0",
+    "uuid": "^3.2.1",
+    "validator": "^10.2.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-stage-2": "^6.24.1",
+    "babel-register": "^6.26.0",
+    "chai": "^4.1.2",
+    "cross-env": "^5.1.6",
+    "supertest": "^3.1.0"
+  }
+}
