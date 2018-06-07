@@ -24,6 +24,14 @@ function setConfig() {
 		MONGO_HOST: Joi.string().default('mongodb://localhost'),
 		MONGO_PORTS: Joi.number().default(27017),
 
+		USER_MONGO_HOST: Joi.string().default('mongodb://localhost'),
+		USER_MONGO_PORT: Joi.number().default(27017),
+		USER_MONGO_NAME: Joi.string().default('user-service'),
+
+		BUSINESS_MONGO_HOST: Joi.string().default('mongodb://localhost'),
+		BUSINESS_MONGO_PORT: Joi.number().default(27017),
+		BUSINESS_MONGO_NAME: Joi.string().default('business-service'),
+
 		WEB_SERVICE_HOST: Joi.string(),
 		WEB_SERVICE_PORT: Joi.number().default(80),
 
@@ -58,6 +66,16 @@ function setConfig() {
 			accountVerifyUrl: envVars.WEB_SERVICE_HOST + ':' + envVars.WEB_SERVICE_PORT + '/verify/',
 			changePasswordUrl: envVars.WEB_SERVICE_HOST + ':' + envVars.WEB_SERVICE_PORT + '/change-password/',
 		},
+		userMongo: {
+			host: envVars.USER_MONGO_HOST,
+			port: envVars.USER_MONGO_PORT,
+			name: envVars.USER_MONGO_NAME,
+		},
+		businessMongo: {
+			host: envVars.BUSINESS_MONGO_HOST,
+			port: envVars.BUSINESS_MONGO_PORT,
+			name: envVars.BUSINESS_MONGO_NAME,
+		},
 		businessGrpcServer: {
 			host: envVars.BUSINESS_GRPC_HOST,
 			port: envVars.BUSINESS_GRPC_PORT,
@@ -84,8 +102,7 @@ function setConfig() {
 	} catch(err) {
 		throw err;
 	}
-
-
+	
 	return config;
 }
 

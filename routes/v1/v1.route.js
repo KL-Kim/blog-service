@@ -1,8 +1,8 @@
 import Express from 'express';
-import blogRoute from './blog.route';
+import postRoute from './post.route';
 
 const router = Express.Router();
 
-router.use('/blog', blogRoute);
+router.use('/post', postRoute);
 
 export default router;

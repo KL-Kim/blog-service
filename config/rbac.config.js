@@ -6,25 +6,25 @@
 
 const grants = {
 	"guest": {
-		
+		post: {}
 	},
 	"regular": {
-
+		post: {}
 	},
 	"owner": {
-
+		post: {}
 	},
 	"writer": {
-
+		post: {}
 	},
 	"manager": {
-
+		post: {}
 	},
 	"admin": {
-
+		post: {}
 	},
 	"god": {
-
+		post: {}
 	}
 };
 
