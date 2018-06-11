@@ -20,6 +20,11 @@ const PostSchema = new Schema({
     enum: ['DRAFT', 'PUBLISHED', 'TRASH'],
     default: 'DRAFT',
   },
+  "state": {
+    type: String,
+    enum: ['NORMAL', 'SUSPENDED'],
+    default: 'NORMAL',
+  },
   "authorId": {
     type: Schema.Types.ObjectId,
     ref: 'User',

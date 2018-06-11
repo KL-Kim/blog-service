@@ -61,4 +61,14 @@ export default {
       authorId: Joi.string().hex().required(),
     },
   },
+
+  // Update post state by admin
+  "updatePostByAdmin": {
+    "params": {
+      id: Joi.string().hex().required(),
+    },
+    "body": {
+      state: Joi.string().valid(['NORMAL', 'SUSPENDED']),
+    },
+  }
 };

@@ -22,4 +22,7 @@ router.put('/single/:id', validate(paramValidation.updatePost), postController.u
 /** DELETE /api/v1/post:id - Delete post **/
 router.delete('/single/:id', validate(paramValidation.deletePost), postController.deletePost);
 
+/** PUT /api/v1/post/admin/:id - Update post state by admin **/
+router.put('/admin/:id', validate(paramValidation.updatePostByAdmin),postController.updatePostByAdmin);
+
 export default router;

@@ -131,6 +131,7 @@ class PostController extends BaseController {
 
         let publishedAt;
 
+        // Set publish time
         if (post.status !== 'PUBLISHED' && req.body.status === 'PUBLISHED') {
           publishedAt = Date.now();
         }
@@ -173,6 +174,33 @@ class PostController extends BaseController {
         return next(err);
       })
   }
+
+  /**
+   * Update post state by admin
+   * @property {ObjectId} req.params.id - Post id
+   * @property {String} req.body.state - Post state
+   */
+  updatePostByAdmin(req, res, next) {
+    PostController.authenticate(req, res, next)
+      .then(payload => {
+        if (payload.role !== 'manager' && payload.role !== 'admin' && payload.role !== 'god')
+          throw new APIError("Forbidden", httpStatus.FORBIDDEN);
+
+        return Post.getById(req.params.id);
+      })
+      .then(post => {
+        if (_.isEmpty(post)) throw new APIError("Not found", httpStatus.NOT_FOUND);
+
+        return post.update({ state: req.body.state });
+      })
+      .then(result => {
+        return res.status(204).send();
+      })
+      .catch(err => {
+        return next(err);
+      });
+  }
+
   /**
    * Authenticate
    */
@@ -182,7 +210,7 @@ class PostController extends BaseController {
  				if (err) return reject(err);
  				if (info) return reject(new APIError(info.message, httpStatus.UNAUTHORIZED));
 
-        if (payload.isVerified && payload.role === 'writer') {
+        if (payload.isVerified) {
           return resolve(payload);
         } else {
           reject(new APIError("Forbidden", httpStatus.FORBIDDEN));
