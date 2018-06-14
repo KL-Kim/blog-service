@@ -62,6 +62,29 @@ export default {
     },
   },
 
+  // Vote post
+  "votePost": {
+    "params": {
+      id: Joi.string().hex().required(),
+    },
+    "body": {
+      uid: Joi.string().hex().required(),
+      vote: Joi.string().valid(['UPVOTE', 'DOWNVOTE']),
+    },
+  },
+
+  // Report post
+  "reportPost": {
+    "params": {
+      id: Joi.string().hex().required(),
+    },
+    "body": {
+      type: Joi.string().trim().strip(),
+      content: Joi.string().trim().strip(),
+      contact: Joi.string().trim().strip(),
+    },
+  },
+
   // Update post state by admin
   "updatePostByAdmin": {
     "params": {

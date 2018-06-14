@@ -30,6 +30,10 @@ const PostSchema = new Schema({
     ref: 'User',
     required: true,
   },
+  "topic":{
+    type: Schema.Types.ObjectId,
+    ref: 'Topic'
+  },
   "title": {
     type: String,
     required: true,
@@ -49,7 +53,11 @@ const PostSchema = new Schema({
     required: true,
     default: 0
   },
-  "upVote": [{
+  "upvote": [{
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  }],
+  "downvote": [{
     type: Schema.Types.ObjectId,
     ref: 'User'
   }],
@@ -57,12 +65,23 @@ const PostSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Comment'
   }],
+  "reports": [{
+    "checked": {
+      type: Boolean,
+      default: false,
+    },
+    "type": {
+      type: String
+    },
+    "content": {
+      type: String
+    },
+    "contact": {
+      type: String
+    },
+  }],
   "publishedAt":{
     type: Date,
-  },
-  "updatedAt": {
-    type: Date,
-    default: Date.now,
   },
   "createdAt": {
     type: Date,
@@ -168,7 +187,7 @@ PostSchema.statics = {
 			.sort({ "createdAt": -1 })
       .populate({
         path: 'authorId',
-        select: ['username', 'firstName', 'lastName'],
+        select: ['username', 'firstName', 'lastName', 'profilePhotoUri'],
         model: User,
       })
 			.exec();

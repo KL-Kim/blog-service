@@ -19,8 +19,14 @@ router.get('/single/:id', validate(paramValidation.getSinglePost), postControlle
 /** PUT /api/v1/post/:id - Update post **/
 router.put('/single/:id', validate(paramValidation.updatePost), postController.updatePost);
 
-/** DELETE /api/v1/post:id - Delete post **/
+/** DELETE /api/v1/post/:id - Delete post **/
 router.delete('/single/:id', validate(paramValidation.deletePost), postController.deletePost);
+
+/** POST /api/v1/post/vote/:id - Vote Post **/
+router.post('/vote/:id', validate(paramValidation.votePost), postController.votePost);
+
+/** POST /api/v1/post/report/:id - Report Post **/
+router.post('/report/:id', validate(paramValidation.reportPost), postController.reportPost);
 
 /** PUT /api/v1/post/admin/:id - Update post state by admin **/
 router.put('/admin/:id', validate(paramValidation.updatePostByAdmin),postController.updatePostByAdmin);

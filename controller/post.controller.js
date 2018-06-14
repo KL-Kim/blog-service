@@ -123,7 +123,7 @@ class PostController extends BaseController {
       .then(payload => {
         if (req.body.authorId !== payload.uid) throw new APIError("Forbidden", httpStatus.FORBIDDEN);
 
-        return Post.getById(req.params.id);
+        return Post.findById(req.params.id);
       })
       .then(post => {
         if (_.isEmpty(post)) throw new APIError("Not found", httpStatus.NOT_FOUND);
@@ -139,7 +139,6 @@ class PostController extends BaseController {
         return post.update({
           ...req.body,
           publishedAt,
-          updatedAt: Date.now(),
         });
       })
       .then(result => {
@@ -159,7 +158,7 @@ class PostController extends BaseController {
       .then(payload => {
         if (req.body.authorId !== payload.uid) throw new APIError("Forbidden", httpStatus.FORBIDDEN);
 
-        return Post.getById(req.params.id);
+        return Post.findById(req.params.id);
       })
       .then(post => {
         if (_.isEmpty(post)) throw new APIError("Not found", httpStatus.NOT_FOUND);
@@ -173,6 +172,92 @@ class PostController extends BaseController {
       .catch(err => {
         return next(err);
       })
+  }
+
+  /**
+   * Vote post
+   * @property {ObjectId} req.body.uid - User id
+   * @property {String} req.body.vote - Upvote or downvote
+   */
+  votePost(req, res, next) {
+    PostController.authenticate(req, res, next)
+      .then(payload => {
+        if (req.body.uid !== payload.uid) throw new APIError("Forbidden", httpStatus.FORBIDDEN);
+
+        return Post.findById(req.params.id);
+      })
+      .then(post => {
+        if (_.isEmpty(post)) throw new APIError("Not found", httpStatus.NOT_FOUND);
+        if (post.authorId.toString() === req.body.uid) throw new APIError("Forbidden", httpStatus.FORBIDDEN);
+
+        const upIndex = post.upvote.indexOf(req.body.uid);
+        const downIndex = post.downvote.indexOf(req.body.uid);
+
+        if (req.body.vote === 'UPVOTE') {
+          if (upIndex > -1) {
+            post.upvote.splice(upIndex, 1);
+          } else {
+            if (downIndex > -1) {
+              post.downvote.splice(downIndex, 1);
+            }
+
+            post.upvote.push(req.body.uid);
+          }
+        } else if (req.body.vote === 'DOWNVOTE') {
+          if (downIndex > -1) {
+            post.downvote.splice(downIndex, 1);
+          } else {
+            if (upIndex > -1) {
+              post.upvote.splice(upIndex , 1);
+            }
+
+            post.downvote.push(req.body.uid);
+          }
+        }
+
+        return post;
+      })
+      .then(post => {
+        return post.save();
+      })
+      .then(post => {
+        return res.json({
+          post
+        });
+      })
+      .catch(err => {
+        return next(err);
+      })
+  }
+
+  /**
+   * Report post
+   * @property {ObjectId} req.params.id - Post Id
+   * @property {String} req.body.type - Report type
+   * @property {String} req.body.content - Report content
+   * @property {String} req.body.contact - User contact
+   */
+  reportPost(req, res, next) {
+    Post.findById(req.params.id)
+      .then(post => {
+        if (_.isEmpty(post)) throw new APIError("Not found", httpStatus.NOT_FOUND);
+
+        const { type, content, contact } = req.body;
+
+        post.reports.push({
+          type,
+          content,
+          contact,
+        });
+
+        return post.save();
+      })
+      .then(post => {
+        return res.status(204).send();
+      })
+      .catch(err => {
+        return next(err);
+      });
   }
 
   /**
