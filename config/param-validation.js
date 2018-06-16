@@ -13,8 +13,7 @@ export default {
       skip: Joi.number(),
       limit: Joi.number(),
       search: Joi.string().trim().strip().allow(''),
-      status: Joi.string().valid(['DRAFT', 'PUBLISHED', 'TRASH']),
-      authorId: Joi.string().hex(),
+      uid: Joi.string().hex(),
     }
   },
 
@@ -83,6 +82,17 @@ export default {
       content: Joi.string().trim().strip(),
       contact: Joi.string().trim().strip(),
     },
+  },
+
+  // Get posts list by admin
+  "getPostsListByAdmin": {
+    "query": {
+      skip: Joi.number(),
+      limit: Joi.number(),
+      search: Joi.string().trim().strip().allow(''),
+      status: Joi.string().valid(['DRAFT', 'PUBLISHED', 'TRASH']),
+      uid: Joi.string().hex(),
+    }
   },
 
   // Update post state by admin

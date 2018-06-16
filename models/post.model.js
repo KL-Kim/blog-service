@@ -1,3 +1,12 @@
+/**
+ * Post Model
+ *
+ * @version 0.0.1
+ *
+ * @author KL-Kim (https://github.com/KL-Kim)
+ * @license MIT
+ */
+
 import Promise from 'bluebird';
 import mongoose, { Schema } from 'mongoose';
 import httpStatus from 'http-status';
@@ -5,6 +14,7 @@ import _ from 'lodash';
 
 import APIError from '../helper/api-error';
 import config from '../config/config';
+
 const userDB = mongoose.createConnection(config.userMongo.host + ':' + config.userMongo.port + '/' + config.userMongo.name);
 const User = userDB.model('User', {});
 
@@ -44,6 +54,7 @@ const PostSchema = new Schema({
   "content": {
     type: String,
     required: true,
+    text: true,
   },
   "keywords": [{
     type: String
@@ -82,10 +93,12 @@ const PostSchema = new Schema({
   }],
   "publishedAt":{
     type: Date,
+    index: true
   },
   "createdAt": {
     type: Date,
-		default: Date.now
+		default: Date.now,
+    index: true
   },
 });
 
@@ -93,8 +106,8 @@ const PostSchema = new Schema({
  * Indexes
  */
 PostSchema.index({
-  "priority": 1,
-  "title": "text",
+  "priority": -1,
+  "createdAt": -1
 });
 
 /**

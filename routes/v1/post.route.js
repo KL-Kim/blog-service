@@ -7,6 +7,14 @@ import PostController from '../../controller/post.controller';
 const router = Express.Router();
 const postController = new PostController();
 
+validate.options({
+  allowUnknownBody: false,
+  allowUnknownHeaders: true,
+  allowUnknownQuery: true,
+  allowUnknownParams: false,
+  allowUnknownCookies: true
+});
+
 /** GET /api/v1/post - Get post list **/
 router.get('/', validate(paramValidation.getList), postController.getList);
 
@@ -27,6 +35,9 @@ router.post('/vote/:id', validate(paramValidation.votePost), postController.vote
 
 /** POST /api/v1/post/report/:id - Report Post **/
 router.post('/report/:id', validate(paramValidation.reportPost), postController.reportPost);
+
+/** GET /api/v1/post/admin - Get posts list by admin **/
+router.get('/admin', validate(paramValidation.getPostsListByAdmin), postController.getPostsListByAdmin);
 
 /** PUT /api/v1/post/admin/:id - Update post state by admin **/
 router.put('/admin/:id', validate(paramValidation.updatePostByAdmin),postController.updatePostByAdmin);

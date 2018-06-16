@@ -1,3 +1,13 @@
+/**
+ * Post controller
+ *
+ * @export {Class}
+ * @version 0.0.1
+ *
+ * @author KL-Kim (https://github.com/KL-Kim)
+ * @license MIT
+ */
+
 import Promise from 'bluebird';
 import httpStatus from 'http-status';
 import passport from 'passport';
@@ -8,12 +18,11 @@ import APIError from '../helper/api-error';
 import Post from '../models/post.model';
 
 class PostController extends BaseController {
-  constructor() {
-    super();
-  }
 
   /**
    * Get posts list
+   * @role - *
+   * @since 0.0.1
    * @property {Number} req.query.skip - Number of list to skip
    * @property {Number} req.query.limit - Number of list to limit
    * @property {ObjectId} req.query.uid - Author user id
@@ -21,22 +30,18 @@ class PostController extends BaseController {
    * @property {String} req.query.status - Post status
    */
   getList(req, res, next) {
-    const { skip, limit, uid, search, status } = req.query;
+    const { skip, limit, uid, search } = req.query;
 
-    Post.getCount({
-      search,
-      filter:
-      {
-        uid,
-        status,
-      }
-    }).then(count => {
+    const filter = {
+      uid,
+      status: 'PUBLISHED'
+    };
+
+    Post.getCount({ search, filter })
+      .then(count => {
         req.count = count;
 
-        return Post.getList({ skip, limit, search, filter: {
-          uid,
-          status
-        }});
+        return Post.getList({ skip, limit, search, filter});
       })
       .then(list => {
         return res.json({
@@ -51,6 +56,8 @@ class PostController extends BaseController {
 
   /**
    * Get single post
+   * @role - *
+   * @since 0.0.1
    * @property {ObjectId} req.params.id - Post id
    */
   getSinglePost(req, res, next) {
@@ -71,6 +78,8 @@ class PostController extends BaseController {
 
   /**
    * Add new post
+   * @role - writer, manager, admin
+   * @since 0.0.1
    * @property {ObjectId} req.body.authorId - Auther user id
    * @property {String} req.body.title - Post title
    * @property {String} req.body.summary - Post summary
@@ -82,6 +91,7 @@ class PostController extends BaseController {
     PostController.authenticate(req, res, next)
       .then(payload => {
         if (req.body.authorId !== payload.uid) throw new APIError("Forbidden", httpStatus.FORBIDDEN);
+        if (payload.role === 'writer' || payload.role === 'manager' || payload.role === 'admin') throw new APIError("Forbidden", httpStatus.FORBIDDEN);
 
         const { authorId, title, summary, content, keywords, status } = req.body;
 
@@ -110,6 +120,8 @@ class PostController extends BaseController {
 
   /**
    * Update post
+   * @role - writer, manager, admin
+   * @since 0.0.1
    * @property {ObjectId} req.params.id - Post id
    * @property {ObjectId} req.body.authorId - Auther user id
    * @property {String} req.body.title - Post title
@@ -122,6 +134,7 @@ class PostController extends BaseController {
     PostController.authenticate(req, res, next)
       .then(payload => {
         if (req.body.authorId !== payload.uid) throw new APIError("Forbidden", httpStatus.FORBIDDEN);
+        if (payload.role === 'writer' || payload.role === 'manager' || payload.role === 'admin') throw new APIError("Forbidden", httpStatus.FORBIDDEN);
 
         return Post.findById(req.params.id);
       })
@@ -151,12 +164,16 @@ class PostController extends BaseController {
 
   /**
    * Delete post
+   * @role - writer, manager, admin
+   * @since 0.0.1
    * @property {ObjectId} req.params.id - Post id
+   * @property {ObjectId} req.body.authorId - User id
    */
   deletePost(req, res, next) {
     PostController.authenticate(req, res, next)
       .then(payload => {
         if (req.body.authorId !== payload.uid) throw new APIError("Forbidden", httpStatus.FORBIDDEN);
+        if (payload.role === 'writer' || payload.role === 'manager' || payload.role === 'admin') throw new APIError("Forbidden", httpStatus.FORBIDDEN);
 
         return Post.findById(req.params.id);
       })
@@ -176,6 +193,8 @@ class PostController extends BaseController {
 
   /**
    * Vote post
+   * @role - *
+   * @since 0.0.1
    * @property {ObjectId} req.body.uid - User id
    * @property {String} req.body.vote - Upvote or downvote
    */
@@ -232,6 +251,8 @@ class PostController extends BaseController {
 
   /**
    * Report post
+   * @role - *
+   * @since 0.0.1
    * @property {ObjectId} req.params.id - Post Id
    * @property {String} req.body.type - Report type
    * @property {String} req.body.content - Report content
@@ -261,7 +282,51 @@ class PostController extends BaseController {
   }
 
   /**
+   * Get posts list by admin
+   * @role - manager, admin, god
+   * @since 0.0.1
+   * @property {Number} req.query.skip - Number of list to skip
+   * @property {Number} req.query.limit - Number of list to limit
+   * @property {ObjectId} req.query.uid - Author user id
+   * @property {String} req.query.search - Search term
+   * @property {String} req.query.status - Post status
+   */
+  getPostsListByAdmin(req, res, next) {
+    PostController.authenticate(req, res, next)
+      .then(payload => {
+        if (payload.role !== 'manager' && payload.role !== 'admin' && payload.role !== 'god')
+          throw new APIError("Forbidden", httpStatus.FORBIDDEN);
+
+        const { skip, limit, uid, search, status } = req.query;
+
+        const filter = {
+          uid,
+          status,
+        };
+
+        return Post.getCount({ search, filter });
+      })
+      .then(count => {
+        req.count = count;
+
+        return Post.getList({ skip, limit, search, filter});
+      })
+      .then(list => {
+        return res.json({
+          totalCount: req.count,
+          list
+        });
+      })
+      .catch(err => {
+        return next(err);
+      });
+
+  }
+
+  /**
    * Update post state by admin
+   * @role - manager, admin, god
+   * @since 0.0.1
    * @property {ObjectId} req.params.id - Post id
    * @property {String} req.body.state - Post state
    */
@@ -288,6 +353,8 @@ class PostController extends BaseController {
 
   /**
    * Authenticate
+   * @since 0.0.1
+	 * @returns {Promise<Object, APIError>}
    */
   static authenticate(req, res, next) {
  		return new Promise((resolve, reject) => {
@@ -295,11 +362,7 @@ class PostController extends BaseController {
  				if (err) return reject(err);
  				if (info) return reject(new APIError(info.message, httpStatus.UNAUTHORIZED));
 
-        if (payload.isVerified) {
-          return resolve(payload);
-        } else {
-          reject(new APIError("Forbidden", httpStatus.FORBIDDEN));
-        }
+        return resolve(payload);
  			})(req, res, next);
  		});
  	}

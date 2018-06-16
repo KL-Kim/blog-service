@@ -6,25 +6,56 @@
 
 const grants = {
 	"guest": {
-		post: {}
+		post: {
+			"read:any": ['*', '!status', '!state', '!reports']
+		}
 	},
 	"regular": {
-		post: {}
+		post: {
+			"read:any": ['*', '!status', '!state', '!reports']
+		}
 	},
 	"owner": {
-		post: {}
+		post: {
+			"read:any": ['*', '!status', '!state', '!reports']
+		}
 	},
 	"writer": {
-		post: {}
+		post: {
+			"read:own": ['*'],
+			"read:any": ['*', '!status', 'state', '!reports'],
+			"creat:own": ['*'],
+			"update:own": ['*'],
+			"delete:own": ['*'],
+		}
 	},
 	"manager": {
-		post: {}
+		post: {
+			post: {
+				"read:any": ['*'],
+				"creat:own": ['*'],
+				"update:own": ['*'],
+				"update:any": ['status', 'state', 'reports'],
+				"delete:own": ['*'],
+			}
+		}
 	},
 	"admin": {
-		post: {}
+		post: {
+			post: {
+				"read:any": ['*'],
+				"creat:own": ['*'],
+				"update:own": ['*'],
+				"update:any": ['status', 'state', 'reports'],
+				"delete:own": ['*'],
+			}
+		}
 	},
 	"god": {
-		post: {}
+		post: {
+			"read:any": ['*'],
+			"update:any": ['status', 'state', 'reports'],
+		}
 	}
 };
 
