@@ -143,18 +143,25 @@ PostSchema.statics = {
     let conditions,
         userCondition,
         statusCondition,
-        searchCondition;
+        searchCondition,
+        stateCondition;
 
     if (filter.uid) {
       userCondition = {
-        "authorId": filter.uid
+        "authorId": filter.uid,
       };
     }
 
     if (filter.status) {
       statusCondition = {
-        "status": filter.status
-      }
+        "status": filter.status,
+      };
+    }
+
+    if (filter.state) {
+      stateCondition = {
+        "state": filter.state,
+      };
     }
 
     const escapedString = _.escapeRegExp(search);
@@ -184,12 +191,13 @@ PostSchema.statics = {
       }
     }
 
-    if (userCondition || searchCondition || statusCondition) {
+    if (userCondition || searchCondition || statusCondition || stateCondition) {
       conditions = {
         "$and": [
           _.isEmpty(searchCondition) ? {} : searchCondition,
           _.isEmpty(userCondition) ? {} : userCondition,
           _.isEmpty(statusCondition)? {} : statusCondition,
+          _.isEmpty(stateCondition)? {} : stateCondition,
         ]
       }
     }
@@ -215,7 +223,8 @@ PostSchema.statics = {
     let conditions,
         userCondition,
         statusCondition,
-        searchCondition;
+        searchCondition,
+        stateCondition;
 
     if (filter.uid) {
       userCondition = {
@@ -224,10 +233,15 @@ PostSchema.statics = {
     }
 
     if (filter.status) {
-      console.log(filter.status);
       statusCondition = {
         "status": filter.status
       }
+    }
+
+    if (filter.state) {
+      stateCondition = {
+        "state": filter.state,
+      };
     }
 
     const escapedString = _.escapeRegExp(search);
@@ -257,12 +271,13 @@ PostSchema.statics = {
       }
     }
 
-    if (userCondition || searchCondition || statusCondition) {
+    if (userCondition || searchCondition || statusCondition || stateCondition) {
       conditions = {
         "$and": [
           _.isEmpty(searchCondition) ? {} : searchCondition,
           _.isEmpty(userCondition) ? {} : userCondition,
           _.isEmpty(statusCondition)? {} : statusCondition,
+          _.isEmpty(stateCondition)? {} : stateCondition,
         ]
       }
     }

@@ -30,11 +30,12 @@ class PostController extends BaseController {
    * @property {String} req.query.status - Post status
    */
   getList(req, res, next) {
-    const { skip, limit, uid, search } = req.query;
+    const { skip, limit, uid, search, status, state } = req.query;
 
     const filter = {
       uid,
-      status: 'PUBLISHED'
+      status,
+      state,
     };
 
     Post.getCount({ search, filter })
@@ -91,7 +92,7 @@ class PostController extends BaseController {
     PostController.authenticate(req, res, next)
       .then(payload => {
         if (req.body.authorId !== payload.uid) throw new APIError("Forbidden", httpStatus.FORBIDDEN);
-        if (payload.role === 'writer' || payload.role === 'manager' || payload.role === 'admin') throw new APIError("Forbidden", httpStatus.FORBIDDEN);
+        if (payload.role !== 'writer' && payload.role !== 'manager' && payload.role !== 'admin') throw new APIError("Forbidden", httpStatus.FORBIDDEN);
 
         const { authorId, title, summary, content, keywords, status } = req.body;
 
@@ -134,7 +135,7 @@ class PostController extends BaseController {
     PostController.authenticate(req, res, next)
       .then(payload => {
         if (req.body.authorId !== payload.uid) throw new APIError("Forbidden", httpStatus.FORBIDDEN);
-        if (payload.role === 'writer' || payload.role === 'manager' || payload.role === 'admin') throw new APIError("Forbidden", httpStatus.FORBIDDEN);
+        if (payload.role !== 'writer' && payload.role !== 'manager' && payload.role !== 'admin') throw new APIError("Forbidden", httpStatus.FORBIDDEN);
 
         return Post.findById(req.params.id);
       })
@@ -147,6 +148,8 @@ class PostController extends BaseController {
         // Set publish time
         if (post.status !== 'PUBLISHED' && req.body.status === 'PUBLISHED') {
           publishedAt = Date.now();
+        } else {
+          publishedAt = null;
         }
 
         return post.update({
@@ -173,7 +176,6 @@ class PostController extends BaseController {
     PostController.authenticate(req, res, next)
       .then(payload => {
         if (req.body.authorId !== payload.uid) throw new APIError("Forbidden", httpStatus.FORBIDDEN);
-        if (payload.role === 'writer' || payload.role === 'manager' || payload.role === 'admin') throw new APIError("Forbidden", httpStatus.FORBIDDEN);
 
         return Post.findById(req.params.id);
       })
@@ -294,14 +296,14 @@ class PostController extends BaseController {
   getPostsListByAdmin(req, res, next) {
     PostController.authenticate(req, res, next)
       .then(payload => {
-        if (payload.role !== 'manager' && payload.role !== 'admin' && payload.role !== 'god')
-          throw new APIError("Forbidden", httpStatus.FORBIDDEN);
+        if (payload.role !== 'manager' && payload.role !== 'admin' && payload.role !== 'god') throw new APIError("Forbidden", httpStatus.FORBIDDEN);
 
-        const { skip, limit, uid, search, status } = req.query;
+        const { skip, limit, uid, search, status, state } = req.query;
 
         const filter = {
           uid,
           status,
+          state,
         };
 
         return Post.getCount({ search, filter });
