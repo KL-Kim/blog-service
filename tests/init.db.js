@@ -12,11 +12,11 @@ let post, i;
 
 for (i = 0; i < 100; i++) {
 	post = new Post({
-		authorId: "5aed293e759fa22004227195",
-    title: 'Title ' + i,
-    content: "Content " + i,
-    summary: "Summary " + i,
-    status: "PUBLISHED",
+		authorId: "5b5eb06fb497fb0efad11a06",
+		title: 'Title ' + i,
+		content: "Content " + i,
+		summary: "Summary " + i,
+		status: "PUBLISHED",
 	});
 
 	post.save().then((item) => {
