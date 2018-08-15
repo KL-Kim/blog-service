@@ -80,7 +80,7 @@ export default {
     "body": {
       type: Joi.string().trim().strip(),
       content: Joi.string().trim().strip(),
-      contact: Joi.string().trim().strip(),
+      contact: Joi.string().trim().strip().allow(''),
     },
   },
 

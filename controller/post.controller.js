@@ -91,6 +91,7 @@ class PostController extends BaseController {
   addNewPost(req, res, next) {
     PostController.authenticate(req, res, next)
       .then(payload => {
+        if (!payload.isVerified) throw new APIError("Unauthorized", httpStatus.UNAUTHORIZED);
         if (req.body.authorId !== payload.uid) throw new APIError("Forbidden", httpStatus.FORBIDDEN);
         if (payload.role !== 'writer' && payload.role !== 'manager' && payload.role !== 'admin') throw new APIError("Forbidden", httpStatus.FORBIDDEN);
 
@@ -134,6 +135,7 @@ class PostController extends BaseController {
   updatePost(req, res, next) {
     PostController.authenticate(req, res, next)
       .then(payload => {
+        if (!payload.isVerified) throw new APIError("Unauthorized", httpStatus.UNAUTHORIZED);
         if (req.body.authorId !== payload.uid) throw new APIError("Forbidden", httpStatus.FORBIDDEN);
         if (payload.role !== 'writer' && payload.role !== 'manager' && payload.role !== 'admin') throw new APIError("Forbidden", httpStatus.FORBIDDEN);
 
@@ -175,6 +177,7 @@ class PostController extends BaseController {
   deletePost(req, res, next) {
     PostController.authenticate(req, res, next)
       .then(payload => {
+        if (!payload.isVerified) throw new APIError("Unauthorized", httpStatus.UNAUTHORIZED);
         if (req.body.authorId !== payload.uid) throw new APIError("Forbidden", httpStatus.FORBIDDEN);
 
         return Post.findById(req.params.id);
@@ -296,6 +299,7 @@ class PostController extends BaseController {
   getPostsListByAdmin(req, res, next) {
     PostController.authenticate(req, res, next)
       .then(payload => {
+        if (!payload.isVerified) throw new APIError("Unauthorized", httpStatus.UNAUTHORIZED);
         if (payload.role !== 'manager' && payload.role !== 'admin' && payload.role !== 'god') throw new APIError("Forbidden", httpStatus.FORBIDDEN);
 
         const { skip, limit, uid, search, status, state } = req.query;
@@ -335,6 +339,7 @@ class PostController extends BaseController {
   updatePostByAdmin(req, res, next) {
     PostController.authenticate(req, res, next)
       .then(payload => {
+        if (!payload.isVerified) throw new APIError("Unauthorized", httpStatus.UNAUTHORIZED);
         if (payload.role !== 'manager' && payload.role !== 'admin' && payload.role !== 'god')
           throw new APIError("Forbidden", httpStatus.FORBIDDEN);
 
