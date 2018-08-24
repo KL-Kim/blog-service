@@ -208,7 +208,7 @@ PostSchema.statics = {
 			.sort({ "createdAt": -1 })
       .populate({
         path: 'authorId',
-        select: ['username', 'firstName', 'lastName', 'profilePhotoUri'],
+        select: ['username', 'firstName', 'lastName', 'avatarUrl'],
         model: User,
       })
 			.exec();
@@ -294,7 +294,7 @@ PostSchema.statics = {
     return this.findById(id)
       .populate({
         path: 'authorId',
-        select: ['username', 'firstName', 'lastName', 'profilePhotoUri'],
+        select: ['username', 'firstName', 'lastName', 'avatarUrl'],
         model: User,
       })
       .exec();
